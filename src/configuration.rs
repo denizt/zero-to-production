@@ -1,6 +1,8 @@
 use crate::domain::SubscriberEmail;
 use secrecy::{ExposeSecret, Secret};
-use serde_aux::field_attributes::deserialize_number_from_string;
+use serde_aux::field_attributes::{
+    bool_true, deserialize_bool_from_anything, deserialize_number_from_string,
+};
 use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use std::convert::{TryFrom, TryInto};
 
@@ -19,6 +21,11 @@ pub struct ApplicationSettings {
     pub host: String,
     pub base_url: String,
     pub hmac_secret: Secret<String>,
+    #[serde(
+        default = "bool_true",
+        deserialize_with = "deserialize_bool_from_anything"
+    )]
+    pub secure_cookies: bool,
 }
 
 #[derive(serde::Deserialize, Clone)]
